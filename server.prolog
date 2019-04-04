@@ -5,7 +5,7 @@
 :- use_module(library(http/http_parameters)).
 :- use_module(library(http/http_unix_daemon)).
 
-:- use_module(lib).
+:- use_module(libhtml).
 
 
 % sample structs
@@ -27,8 +27,7 @@ html_struct(Request) :-
 html_struct(Request) :-
     member(method(post), Request),
     http_read_json_dict(Request, Json, []),
-    transform_struct(Json, NewJson),
-    struct_to_html(NewJson, Html),
+    struct_to_html(Json, Html),
     reply_html_page([title('Json <-> HTML')], Html).
 
 thumbnails(Request) :-
