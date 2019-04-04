@@ -6,6 +6,8 @@
 :- use_module(library(http/http_unix_daemon)).
 
 :- use_module(libhtml).
+:- use_module(libvid).
+:- use_module('google_cloud/video_intelligence').
 
 
 % sample structs
@@ -30,6 +32,14 @@ html_struct(Request) :-
     struct_to_html(Json, Html),
     reply_html_page([title('Json <-> HTML')], Html).
 
+google_cloud_video_intelligence(Request) :-
+    member(method(post), Request),
+    http_read_json_dict(Request, Json, []),
+    struct_path(Json, Path),
+    map_transform(Path, Json, Transform),
+    struct_to_html(Transform, Html),
+    reply_html_page([title(Path)], Html).
+
 thumbnails(Request) :-
     member(method(get), Request),
     http_parameters(Request, [
@@ -44,5 +54,6 @@ thumbnails(Request) :-
 
 :- http_handler('/html_struct', html_struct, []).
 :- http_handler('/thumbnails', thumbnails, []).
+:- http_handler('/google', google_cloud_video_intelligence, []).
 
 :- initialization(http_daemon).
